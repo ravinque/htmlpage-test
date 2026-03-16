@@ -1,0 +1,15 @@
+{
+  "name": "htmlpage-playwright-tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Playwright E2E & performance tests for https://htmlpage.cn",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
+
