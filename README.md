@@ -39,7 +39,7 @@ npx playwright install chromium
 | `utils/site-module-reporter.ts` | 生成 `reports/<站点id>/latest/` 与汇总 `reports/_all/` |
 | `tests-<id>/site.config.ts` | 仅含 `id` 与 `baseURL` |
 | `tests-<id>/routes.ts` | 路径、主导航、同域爬取前缀等（站点专属） |
-| `tests-<id>/*.spec.ts` | 该站点的用例 |
+| `tests-<id>/<功能>/` | 按业务分目录（如 `home/`、`contact-us/`、`blog/`），其下多个 `*.spec.ts` 为独立测试集（落地、渠道、同域爬取等） |
 | `utils/tag-run.cjs` | `npm run tag:run`：给当前提交打测试运行相关 git 标签 |
 
 站点 `id` 必须为**单个 token**（如 `htmlpage`、`hola`），以便项目名 `{id}-{browser}` 与 reporter 解析一致；目录名约定为 **`tests-{id}`**。
@@ -100,7 +100,7 @@ npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --hea
 只跑某一个文件 / 用例名时，在命令末尾追加 Playwright 参数，例如：
 
 ```bash
-npm run test:htmlpage:manual -- tests-htmlpage/home.spec.ts
+npm run test:htmlpage:manual -- tests-htmlpage/contact-us
 npm run test:htmlpage:manual -- --grep "首页"
 ```
 
@@ -125,7 +125,7 @@ npm run test:htmlpage:manual -- --grep "首页"
 
 1. 复制 `tests-htmlpage/`（或相近站点）为 `tests-<新id>/`。
 2. 修改 `site.config.ts`（`id`、`baseURL`）与 `routes.ts`（路径与爬取范围）。
-3. 按需增删改 `*.spec.ts`。
+3. 在各功能子目录下增删改 `*.spec.ts`；新功能可新建目录（如 `pricing/`）并保留 `@module-*` 标签便于报告汇总。
 4. 在 `utils/registry.ts` 中 `import` 新站的 `site.config` 并把该配置对象加入 `allSites`。
 
 ---
