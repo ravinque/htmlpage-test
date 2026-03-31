@@ -1,11 +1,11 @@
-# htmlpage-playwright-tests
+# lapus-tests
 
 基于 Playwright 的 `https://htmlpage.cn` 自动化测试项目（功能测试 + 轻量性能基线）。
 
 ## 安装
 
 ```bash
-cd htmlpage-playwright-tests
+cd lapus-tests
 npm install
 npx playwright install
 ```
@@ -13,7 +13,7 @@ npx playwright install
 或使用 `pnpm`：
 
 ```bash
-cd htmlpage-playwright-tests
+cd lapus-tests
 pnpm install
 pnpm exec playwright install
 ```
