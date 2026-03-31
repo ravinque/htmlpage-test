@@ -84,7 +84,8 @@ export default class SiteModuleReporter implements Reporter {
   private projectRoot = '';
   private rows: Row[] = [];
 
-  onBegin(config: FullConfig, _suite: Suite) {
+  onBegin(config: FullConfig, suite: Suite) {
+    void suite;
     this.projectRoot = workspaceRoot(config);
   }
 
@@ -120,7 +121,9 @@ export default class SiteModuleReporter implements Reporter {
 
     if (fs.existsSync(manifestPath)) {
       try {
-        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        manifest = JSON.parse(
+          fs.readFileSync(manifestPath, 'utf8')
+        ) as typeof manifest;
       } catch {
         /* ignore */
       }

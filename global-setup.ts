@@ -43,7 +43,7 @@ export default async function globalSetup() {
           ? { channel: channel as 'chrome' | 'msedge' | 'chrome-beta' }
           : {};
       const browser = await launcher.launch(opts);
-      browserVersions[name] = await browser.version();
+      browserVersions[name] = browser.version();
       await browser.close();
     } catch {
       browserVersions[name] = 'unknown (launch failed)';

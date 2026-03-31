@@ -11,10 +11,16 @@
     "test:chromium": "cross-env LAPUS_BROWSERS=chromium playwright test",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
-    "tag:run": "node scripts/tag-run.cjs"
+    "tag:run": "node scripts/tag-run.cjs",
+    "lint": "eslint ."
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.52.0",
-    "cross-env": "^7.0.3"
+    "@types/node": "^25.5.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^10.1.0",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0"
   }
 }
