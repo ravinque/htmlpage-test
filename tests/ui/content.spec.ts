@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { attachFullPageScreenshot } from '../helpers/screenshots';
 
-test.describe('HTMLPAGE 功能模块与模板区块', () => {
-  test('功能模块-为什么选择 HTMLPAGE 与统计数据', async ({ page }) => {
+test.describe('HTMLPAGE 主内容区', { tag: '@module-content' }, () => {
+  test('价值主张与「为什么选 HTMLPAGE」模块', async ({ page }, testInfo) => {
     await page.goto('/');
 
     await expect(
@@ -22,27 +23,31 @@ test.describe('HTMLPAGE 功能模块与模板区块', () => {
     await expect(page.getByText(/0 代码拖拽编辑/)).toBeVisible();
     await expect(page.getByText(/300\+ 精选模板/)).toBeVisible();
     await expect(page.getByText(/企业级安全/)).toBeVisible();
+
+    await attachFullPageScreenshot(page, testInfo, 'content-why-pass');
   });
 
-  test('模板区块展示企业/个人/电商模板', async ({ page }) => {
+  test('精选模板区块（企业 / 作品集 / 电商）', async ({ page }, testInfo) => {
     await page.goto('/');
 
     await expect(page.getByText(/精选网页模板/)).toBeVisible();
     await expect(page.getByText(/企业官网模板/)).toBeVisible();
     await expect(page.getByText(/作品集/).first()).toBeVisible();
     await expect(page.getByText(/电商落地页模板/)).toBeVisible();
+
+    await attachFullPageScreenshot(page, testInfo, 'content-templates-pass');
   });
 
-  test('企业级定制服务模块展示完整流程', async ({ page }) => {
+  test('企业级定制服务流程模块', async ({ page }, testInfo) => {
     await page.goto('/');
 
     await expect(page.getByText(/企业级定制服务/).first()).toBeVisible();
-
     await expect(page.getByText(/需求沟通/)).toBeVisible();
     await expect(page.getByText(/方案制定/)).toBeVisible();
     await expect(page.getByText('定制开发', { exact: true })).toBeVisible();
     await expect(page.getByText(/测试验收/)).toBeVisible();
     await expect(page.getByText(/交付部署/)).toBeVisible();
+
+    await attachFullPageScreenshot(page, testInfo, 'content-enterprise-pass');
   });
 });
-

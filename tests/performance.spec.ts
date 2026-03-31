@@ -1,7 +1,8 @@
 import { test } from '@playwright/test';
+import { attachFullPageScreenshot } from './helpers/screenshots';
 
-test.describe('HTMLPAGE 首页性能基线', () => {
-  test('首屏加载时间在合理范围内', async ({ page }) => {
+test.describe('HTMLPAGE 首页性能基线', { tag: '@module-performance' }, () => {
+  test('首屏加载时间在合理范围内', async ({ page }, testInfo) => {
     const start = Date.now();
     await page.goto('/', { waitUntil: 'networkidle' });
     const total = Date.now() - start;
@@ -12,9 +13,11 @@ test.describe('HTMLPAGE 首页性能基线', () => {
     if (total > softBudget) {
       console.warn(`首页加载耗时过长(非致命): ${total}ms (预算: ${softBudget}ms)`);
     }
+
+    await attachFullPageScreenshot(page, testInfo, 'performance-load-pass');
   });
 
-  test('DOM Ready 与完全加载时间', async ({ page }) => {
+  test('DOM Ready 与完全加载时间', async ({ page }, testInfo) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const timing = await page.evaluate(() => {
@@ -33,6 +36,7 @@ test.describe('HTMLPAGE 首页性能基线', () => {
         `DOM Ready 过慢(非致命): ${timing.domContentLoaded}ms (预算: ${domReadyBudget}ms)`
       );
     }
+
+    await attachFullPageScreenshot(page, testInfo, 'performance-timing-pass');
   });
 });
-
