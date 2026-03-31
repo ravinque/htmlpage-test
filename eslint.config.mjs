@@ -12,7 +12,7 @@ export default tseslint.config(
       'reports/**',
       'blob-report/**',
       'eslint.config.mjs',
-      'scripts/**',
+      '**/*.cjs',
     ],
   },
   {

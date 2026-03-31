@@ -40,7 +40,7 @@ npx playwright install chromium
 | `tests-<id>/site.config.ts` | 仅含 `id` 与 `baseURL` |
 | `tests-<id>/routes.ts` | 路径、主导航、同域爬取前缀等（站点专属） |
 | `tests-<id>/*.spec.ts` | 该站点的用例 |
-| `scripts/` | 可选脚本（例如 `tag:run` 打 git 标签） |
+| `utils/tag-run.cjs` | `npm run tag:run`：给当前提交打测试运行相关 git 标签 |
 
 站点 `id` 必须为**单个 token**（如 `htmlpage`、`hola`），以便项目名 `{id}-{browser}` 与 reporter 解析一致；目录名约定为 **`tests-{id}`**。
 
@@ -144,7 +144,7 @@ npm run test:htmlpage:manual -- --grep "首页"
 npm run tag:run
 ```
 
-具体行为见 `scripts/tag-run.cjs`（用于给当前提交打与运行相关的 git 标签等）。
+具体行为见 `utils/tag-run.cjs`。
 
 ---
 
