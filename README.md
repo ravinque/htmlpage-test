@@ -52,6 +52,11 @@ npx playwright install chromium
 | `LAPUS_BROWSERS` | 逗号分隔或 `all`；合法值：`chromium`、`firefox`、`webkit` | `chromium` |
 | `LAPUS_BROWSER_CHANNEL` | 仅 Chromium：使用已安装的渠道浏览器 | `chrome`、`msedge`、`chrome-beta` 等 |
 | `LAPUS_RUN_VERSION` | 可选，写入报告/ manifest 的运行版本标识 | 任意字符串 |
+| `LAPUS_HEADED` | 设为 `1` / `true` / `yes` 时**有界面**跑浏览器（等价于 CLI `--headed`） | `1` |
+| `LAPUS_WORKERS` | 并发 worker 数；设为 `1` 时**逐个用例**执行（适合本地盯浏览器） | `1` |
+| `LAPUS_TERMINAL_REPORTER` | 终端进度样式：`list`（逐条打印，默认）、`line`（单行刷新）、`dot` | `list` |
+
+Playwright CLI 仍可直接传 `--headed`、`--workers=1`；与上述环境变量二选一或组合均可（CLI 一般会覆盖 headed 等部分行为，以 Playwright 文档为准）。
 
 Windows 下推荐通过 npm 脚本或 `cross-env` 设置变量（本仓库脚本已内置 `cross-env`）。
 
@@ -67,6 +72,9 @@ npm test
 npm run test:htmlpage
 npm run test:hola
 
+# htmlpage：有界面 + 单 worker + 终端逐条进度（等价：chromium + LAPUS_HEADED + LAPUS_WORKERS=1 + list）
+npm run test:htmlpage:manual
+
 # 只跑 Chromium（三引擎里最快、本地调试最稳）
 npm run test:chromium
 
@@ -77,16 +85,21 @@ npm run test:ui
 npm run report
 ```
 
-**有界面运行浏览器（headed）**：
+**有界面 + 逐个用例 + 终端列出进度（参数可自行组合）**：
 
 ```bash
-npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --headed
+# 推荐：环境变量（跨平台）
+npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium LAPUS_HEADED=1 LAPUS_WORKERS=1 LAPUS_TERMINAL_REPORTER=list playwright test
+
+# 或 CLI（与上式等价 headed/workers）
+npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --headed --workers=1
 ```
 
-减轻并行压力、降低超时（适合网络慢或机器负载高时）：
+只跑某一个文件 / 用例名时，在命令末尾追加 Playwright 参数，例如：
 
 ```bash
-npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --headed --workers=1
+npm run test:htmlpage:manual -- e2e/sites/htmlpage/home.spec.ts
+npm run test:htmlpage:manual -- --grep "首页"
 ```
 
 **说明**：`cross-env` 之后只写**一个** `playwright` 子命令；不要把 `playwright` 写在 `cross-env` 前面。
