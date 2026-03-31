@@ -1,6 +1,6 @@
 # lapus-tests
 
-基于 Playwright 的多站点端到端测试。**单一配置** `playwright.config.ts`；各站点的路径、导航与爬取规则只放在 `e2e/sites/<站点id>/`。
+基于 Playwright 的多站点端到端测试。**单一配置** `playwright.config.ts`；各站点在根目录 **`tests-<站点id>/`**（如 `tests-htmlpage`、`tests-hola`），共享逻辑集中在 **`utils/`**。
 
 ---
 
@@ -30,17 +30,19 @@ npx playwright install chromium
 
 | 路径 | 作用 |
 |------|------|
-| `playwright.config.ts` | 根据注册表生成 `{站点id}-{chromium\|firefox\|webkit}` 项目 |
+| `playwright.config.ts` | 根据注册表生成 `{站点id}-{chromium\|firefox\|webkit}` 项目，`testDir` 为 `tests-{id}` |
 | `global-setup.ts` | 写入本次运行的 manifest，并探测浏览器版本信息 |
-| `e2e/sites/registry.ts` | **在此注册站点**：`import` 各站 `site.config` 并加入 `allSites` |
-| `e2e/sites/<id>/site.config.ts` | 仅含 `id` 与 `baseURL` |
-| `e2e/sites/<id>/routes.ts` | 路径、主导航、同域爬取前缀等（站点专属） |
-| `e2e/sites/<id>/*.spec.ts` | 该站点的用例 |
-| `e2e/shared/` | 通用：爬取、截图、从 project 名解析站点等（不含站点业务） |
-| `e2e/reporters/site-module-reporter.ts` | 生成 `reports/<站点id>/latest/` 与汇总 `reports/_all/` |
+| `utils/registry.ts` | **在此注册站点**：`import` 各站 `site.config` 并加入 `allSites` |
+| `utils/site.ts` | `SiteDefinition` 类型 + 从 project 名解析站点 / 浏览器 |
+| `utils/crawl.ts` | 同域受限爬取、页面可渲染断言 |
+| `utils/screenshots.ts` | 通过后整页截图并挂到报告 |
+| `utils/site-module-reporter.ts` | 生成 `reports/<站点id>/latest/` 与汇总 `reports/_all/` |
+| `tests-<id>/site.config.ts` | 仅含 `id` 与 `baseURL` |
+| `tests-<id>/routes.ts` | 路径、主导航、同域爬取前缀等（站点专属） |
+| `tests-<id>/*.spec.ts` | 该站点的用例 |
 | `scripts/` | 可选脚本（例如 `tag:run` 打 git 标签） |
 
-站点 `id` 必须为**单个 token**（如 `htmlpage`、`hola`），以便项目名 `{id}-{browser}` 与 reporter 解析一致。
+站点 `id` 必须为**单个 token**（如 `htmlpage`、`hola`），以便项目名 `{id}-{browser}` 与 reporter 解析一致；目录名约定为 **`tests-{id}`**。
 
 ---
 
@@ -98,7 +100,7 @@ npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --hea
 只跑某一个文件 / 用例名时，在命令末尾追加 Playwright 参数，例如：
 
 ```bash
-npm run test:htmlpage:manual -- e2e/sites/htmlpage/home.spec.ts
+npm run test:htmlpage:manual -- tests-htmlpage/home.spec.ts
 npm run test:htmlpage:manual -- --grep "首页"
 ```
 
@@ -121,10 +123,10 @@ npm run test:htmlpage:manual -- --grep "首页"
 
 ## 6. 新增一个站点
 
-1. 复制 `e2e/sites/htmlpage/`（或已有相近站点）到 `e2e/sites/<新id>/`。
+1. 复制 `tests-htmlpage/`（或相近站点）为 `tests-<新id>/`。
 2. 修改 `site.config.ts`（`id`、`baseURL`）与 `routes.ts`（路径与爬取范围）。
 3. 按需增删改 `*.spec.ts`。
-4. 在 `e2e/sites/registry.ts` 中 `import` 新站的 `site.config` 并把该配置对象加入 `allSites`。
+4. 在 `utils/registry.ts` 中 `import` 新站的 `site.config` 并把该配置对象加入 `allSites`。
 
 ---
 
@@ -150,4 +152,4 @@ npm run tag:run
 
 以下目录/文件已在 `.gitignore` 中，**不要加入版本库**：`node_modules/`、`test-results/`、`playwright-report/`、`reports/`、`blob-report/`、`.env` 等。
 
-提交时请只包含源码与配置（如 `e2e/`、`playwright.config.ts`、`package.json`、`README.md` 等），不包含上述生成物。
+提交时请只包含源码与配置（如 `utils/`、`tests-htmlpage/`、`tests-hola/`、`playwright.config.ts`、`package.json`、`README.md` 等），不包含上述生成物。

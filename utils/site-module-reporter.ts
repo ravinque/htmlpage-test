@@ -8,7 +8,7 @@ import type {
 } from '@playwright/test/reporter';
 import * as fs from 'fs';
 import * as path from 'path';
-import { browserFromProject, siteIdFromProject } from '../shared/project-name';
+import { browserFromProject, siteIdFromProject } from './site';
 
 type Row = {
   project: string;

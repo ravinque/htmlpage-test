@@ -1,4 +1,4 @@
-import type { SiteDefinition } from '../../shared/types';
+import type { SiteDefinition } from '../utils/site';
 
 export const holaSite: SiteDefinition = {
   id: 'hola',

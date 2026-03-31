@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { chromium, firefox, webkit } from 'playwright';
-import { activeSites } from './e2e/sites/registry';
+import { activeSites } from './utils/registry';
 
 function pickBrowsers(): string[] {
   const raw = process.env.LAPUS_BROWSERS?.trim();

@@ -1,9 +1,13 @@
 node_modules/
+
+# Playwright 运行产物与 HTML 报告
 test-results/
 playwright-report/
+playwright/.cache/
+
+# 自定义按站点模块报告（site-module-reporter）
 reports/
 blob-report/
-playwright/.cache/
 .env
 .env.local
 *.log

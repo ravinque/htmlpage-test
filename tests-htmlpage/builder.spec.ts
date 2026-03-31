@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { PATHS } from './routes';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('HTMLPAGE 开始使用 / 构建器', { tag: '@module-builder' }, () => {
   test('构建器入口可打开并呈现编辑器加载流程', async ({ page }, testInfo) => {

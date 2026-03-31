@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('Hola 响应式（移动端）', { tag: '@module-responsive' }, () => {
   test.use({ viewport: { width: 390, height: 844 } });

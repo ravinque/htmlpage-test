@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { boundedSameOriginCrawl } from '../../shared/crawl';
+import { boundedSameOriginCrawl } from '../utils/crawl';
 import { PATHS, pathMatchesToolArea } from './routes';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('HTMLPAGE 工具', { tag: '@module-tools' }, () => {
   test('工具箱落地页', async ({ page }, testInfo) => {

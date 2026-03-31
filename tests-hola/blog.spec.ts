@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { boundedSameOriginCrawl } from '../../shared/crawl';
+import { boundedSameOriginCrawl } from '../utils/crawl';
 import { PATHS, pathUnderPrefix } from './routes';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('Hola 博客', { tag: '@module-blog' }, () => {
   test('博客列表落地页', async ({ page }, testInfo) => {

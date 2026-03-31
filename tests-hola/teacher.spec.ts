@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { boundedSameOriginCrawl } from '../../shared/crawl';
+import { boundedSameOriginCrawl } from '../utils/crawl';
 import { PATHS, pathUnderPrefix } from './routes';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('Hola 教师端', { tag: '@module-teacher' }, () => {
   test('教师入口落地页', async ({ page }, testInfo) => {

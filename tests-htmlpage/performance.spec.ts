@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('HTMLPAGE 首页性能基线', { tag: '@module-performance' }, () => {
   test('首屏加载时间在合理范围内', async ({ page }, testInfo) => {

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { boundedSameOriginCrawl } from '../../shared/crawl';
+import { boundedSameOriginCrawl } from '../utils/crawl';
 import { PATHS, pathUnderPrefix } from './routes';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 
 test.describe('HTMLPAGE 文章', { tag: '@module-articles' }, () => {
   test('文章列表落地页', async ({ page }, testInfo) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { attachFullPageScreenshot } from '../../shared/screenshots';
+import { attachFullPageScreenshot } from '../utils/screenshots';
 import { PATHS, TOP_NAV } from './routes';
 
 test.describe('HTMLPAGE 首页', { tag: '@module-home' }, () => {

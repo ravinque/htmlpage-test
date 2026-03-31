@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as path from 'path';
-import { activeSites } from './e2e/sites/registry';
+import { activeSites } from './utils/registry';
 
 const CHANNELS = [
   'chrome',
@@ -43,16 +43,40 @@ function deviceOptions(browser: BrowserName) {
   return { ...devices['Desktop Safari'] };
 }
 
+function parseHeaded(): boolean {
+  const v = process.env.LAPUS_HEADED?.trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes';
+}
+
+function parseWorkers(): number | undefined {
+  const raw = process.env.LAPUS_WORKERS?.trim();
+  if (raw === undefined || raw === '') return undefined;
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n) || n < 0) return undefined;
+  return n;
+}
+
+function terminalReporterName(): 'list' | 'line' | 'dot' {
+  const r = (process.env.LAPUS_TERMINAL_REPORTER || 'list')
+    .trim()
+    .toLowerCase();
+  if (r === 'line' || r === 'dot') return r;
+  return 'list';
+}
+
 const sites = activeSites();
 const browsers = pickBrowsers();
+const headed = parseHeaded();
+const workers = parseWorkers();
 
 const projects = sites.flatMap((site) =>
   browsers.map((browser) => ({
     name: `${site.id}-${browser}`,
-    testDir: path.join(__dirname, 'e2e', 'sites', site.id),
+    testDir: path.join(__dirname, `tests-${site.id}`),
     outputDir: `test-results/${site.id}`,
     use: {
       baseURL: site.baseURL,
+      ...(headed ? { headless: false as const } : {}),
       trace: 'on-first-retry' as const,
       screenshot: 'only-on-failure' as const,
       video: 'retain-on-failure' as const,
@@ -65,11 +89,12 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,
+  ...(workers !== undefined ? { workers } : {}),
   globalSetup: path.join(__dirname, 'global-setup.ts'),
   reporter: [
-    ['list'],
+    [terminalReporterName()],
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
-    ['./e2e/reporters/site-module-reporter.ts'],
+    ['./utils/site-module-reporter.ts'],
   ],
   projects,
 });

@@ -1,11 +1,11 @@
-import type { SiteDefinition } from '../shared/types';
-import { htmlpageSite } from './htmlpage/site.config';
-import { holaSite } from './hola/site.config';
+import type { SiteDefinition } from './site';
+import { htmlpageSite } from '../tests-htmlpage/site.config';
+import { holaSite } from '../tests-hola/site.config';
 
 /**
- * 注册表：新增站点时
- * 1. 新建 e2e/sites/<id>/（site.config.ts + routes.ts + *.spec.ts）
- * 2. 在此处追加一行 import + 数组项
+ * 注册表：新站点
+ * 1. 复制 `tests-htmlpage/` 为 `tests-<id>/`（site.config + routes + specs）
+ * 2. 在此 `import` 并加入 `allSites`
  */
 export const allSites: SiteDefinition[] = [htmlpageSite, holaSite];
 
