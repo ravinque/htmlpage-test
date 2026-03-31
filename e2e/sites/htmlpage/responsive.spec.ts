@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { attachFullPageScreenshot } from './helpers/screenshots';
+import { attachFullPageScreenshot } from '../../shared/screenshots';
 
 test.describe('HTMLPAGE 响应式布局（移动端）', { tag: '@module-responsive' }, () => {
   test.use({ viewport: { width: 390, height: 844 } });

@@ -1,42 +1,140 @@
 # lapus-tests
 
-基于 Playwright 的 `https://htmlpage.cn` 自动化测试项目（功能测试 + 轻量性能基线）。
+基于 Playwright 的多站点端到端测试。**单一配置** `playwright.config.ts`；各站点的路径、导航与爬取规则只放在 `e2e/sites/<站点id>/`。
 
-## 安装
+---
+
+## 1. 环境与前置条件
+
+| 要求 | 说明 |
+|------|------|
+| Node.js | 建议使用当前 LTS（与 Playwright 1.x 兼容） |
+| npm | 随 Node 安装即可 |
+
+首次克隆后：
 
 ```bash
-cd lapus-tests
 npm install
 npx playwright install
 ```
 
-或使用 `pnpm`：
+仅安装 Chromium 可加快下载：
 
 ```bash
-cd lapus-tests
-pnpm install
-pnpm exec playwright install
+npx playwright install chromium
 ```
 
-## 运行测试
+---
+
+## 2. 仓库结构说明
+
+| 路径 | 作用 |
+|------|------|
+| `playwright.config.ts` | 根据注册表生成 `{站点id}-{chromium\|firefox\|webkit}` 项目 |
+| `global-setup.ts` | 写入本次运行的 manifest，并探测浏览器版本信息 |
+| `e2e/sites/registry.ts` | **在此注册站点**：`import` 各站 `site.config` 并加入 `allSites` |
+| `e2e/sites/<id>/site.config.ts` | 仅含 `id` 与 `baseURL` |
+| `e2e/sites/<id>/routes.ts` | 路径、主导航、同域爬取前缀等（站点专属） |
+| `e2e/sites/<id>/*.spec.ts` | 该站点的用例 |
+| `e2e/shared/` | 通用：爬取、截图、从 project 名解析站点等（不含站点业务） |
+| `e2e/reporters/site-module-reporter.ts` | 生成 `reports/<站点id>/latest/` 与汇总 `reports/_all/` |
+| `scripts/` | 可选脚本（例如 `tag:run` 打 git 标签） |
+
+站点 `id` 必须为**单个 token**（如 `htmlpage`、`hola`），以便项目名 `{id}-{browser}` 与 reporter 解析一致。
+
+---
+
+## 3. 环境变量
+
+| 变量 | 说明 | 示例 |
+|------|------|------|
+| `LAPUS_SITES` | 逗号分隔，只跑指定站点；未设置则跑注册表内全部激活站点 | `htmlpage` 或 `htmlpage,hola` |
+| `LAPUS_BROWSERS` | 逗号分隔或 `all`；合法值：`chromium`、`firefox`、`webkit` | `chromium` |
+| `LAPUS_BROWSER_CHANNEL` | 仅 Chromium：使用已安装的渠道浏览器 | `chrome`、`msedge`、`chrome-beta` 等 |
+| `LAPUS_RUN_VERSION` | 可选，写入报告/ manifest 的运行版本标识 | 任意字符串 |
+
+Windows 下推荐通过 npm 脚本或 `cross-env` 设置变量（本仓库脚本已内置 `cross-env`）。
+
+---
+
+## 4. 常用命令
 
 ```bash
+# 默认：registry 中所有站点 × 所选浏览器（见 LAPUS_BROWSERS）
 npm test
-# 或
-pnpm test
+
+# 只跑单站
+npm run test:htmlpage
+npm run test:hola
+
+# 只跑 Chromium（三引擎里最快、本地调试最稳）
+npm run test:chromium
+
+# Playwright UI 模式（挑选用例、调试）
+npm run test:ui
+
+# 打开最近一次生成的 Playwright HTML 报告（默认目录 ./playwright-report）
+npm run report
 ```
 
-## 查看现代化 HTML 报告
+**有界面运行浏览器（headed）**：
 
 ```bash
-npm run report
-# 或
-pnpm run report
+npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --headed
 ```
 
-执行后会打开 Playwright 自带的交互式测试报告，包含：
+减轻并行压力、降低超时（适合网络慢或机器负载高时）：
 
-- 用例分组视图（按浏览器、测试文件）
-- 失败用例的 trace / 截图 / 视频
-- 控制台中输出的性能指标（首页加载时间、DOM Ready 等）
+```bash
+npx cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium playwright test --headed --workers=1
+```
 
+**说明**：`cross-env` 之后只写**一个** `playwright` 子命令；不要把 `playwright` 写在 `cross-env` 前面。
+
+---
+
+## 5. 报告与产物
+
+| 类型 | 位置 | 说明 |
+|------|------|------|
+| Playwright HTML | `playwright-report/` | `npm run report` 打开；**不应提交仓库** |
+| 运行截图与 trace | `test-results/<站点id>/...` | 失败/附件等；**不应提交** |
+| 按站点模块汇总 | `reports/<站点id>/latest/index.html` | 自定义 reporter 生成；**不应提交** |
+| 全站汇总 | `reports/_all/` | 同上 |
+
+每次运行的上下文摘要见 `test-results/run-manifest.json`（若 global setup 成功写入）。
+
+---
+
+## 6. 新增一个站点
+
+1. 复制 `e2e/sites/htmlpage/`（或已有相近站点）到 `e2e/sites/<新id>/`。
+2. 修改 `site.config.ts`（`id`、`baseURL`）与 `routes.ts`（路径与爬取范围）。
+3. 按需增删改 `*.spec.ts`。
+4. 在 `e2e/sites/registry.ts` 中 `import` 新站的 `site.config` 并把该配置对象加入 `allSites`。
+
+---
+
+## 7. 故障排查简要说明
+
+- **大量超时 / 爬取用例失败**：先尝试 `LAPUS_BROWSERS=chromium` 与 `--workers=1`；确认本机网络可访问 `baseURL`。
+- **Firefox / WebKit 与 Chromium 结果不一致**：部分站点对引擎或 TLS 行为不同，属预期差异时需在用例或路由上收窄断言范围。
+- **Chromium 渠道**：设置 `LAPUS_BROWSER_CHANNEL` 前需已在系统中安装对应浏览器；非法值会被忽略，回退默认 Chromium。
+
+---
+
+## 8. 可选：运行版本标签
+
+```bash
+npm run tag:run
+```
+
+具体行为见 `scripts/tag-run.cjs`（用于给当前提交打与运行相关的 git 标签等）。
+
+---
+
+## 9. Git 与忽略项
+
+以下目录/文件已在 `.gitignore` 中，**不要加入版本库**：`node_modules/`、`test-results/`、`playwright-report/`、`reports/`、`blob-report/`、`.env` 等。
+
+提交时请只包含源码与配置（如 `e2e/`、`playwright.config.ts`、`package.json`、`README.md` 等），不包含上述生成物。

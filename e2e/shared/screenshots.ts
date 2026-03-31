@@ -1,7 +1,7 @@
 import type { Page, TestInfo } from '@playwright/test';
 
 /**
- * Full-page screenshot after assertions pass; attached to Playwright HTML report and stored under test-results.
+ * Full-page screenshot after assertions pass; attached to Playwright HTML report.
  */
 export async function attachFullPageScreenshot(
   page: Page,

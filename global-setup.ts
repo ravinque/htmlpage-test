@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { chromium, firefox, webkit } from 'playwright';
+import { activeSites } from './e2e/sites/registry';
 
-function selectedBrowsers(): string[] {
+function pickBrowsers(): string[] {
   const raw = process.env.LAPUS_BROWSERS?.trim();
   if (!raw || raw.toLowerCase() === 'all') {
     return ['chromium', 'firefox', 'webkit'];
@@ -18,6 +19,7 @@ export default async function globalSetup() {
     fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8')
   ) as { version: string };
 
+  const sites = activeSites();
   const startedAt = new Date().toISOString();
   const runId =
     process.env.LAPUS_RUN_VERSION?.trim() ||
@@ -26,15 +28,11 @@ export default async function globalSetup() {
   process.env.LAPUS_RUN_VERSION = runId;
   process.env.LAPUS_RUN_STARTED_AT = startedAt;
 
-  const browsers = selectedBrowsers();
+  const browsers = pickBrowsers();
   const channel = process.env.LAPUS_BROWSER_CHANNEL?.trim() || '';
   const browserVersions: Record<string, string> = {};
 
-  const launchers = {
-    chromium,
-    firefox,
-    webkit,
-  } as const;
+  const launchers = { chromium, firefox, webkit } as const;
 
   for (const name of browsers) {
     const launcher = launchers[name as keyof typeof launchers];
@@ -60,6 +58,7 @@ export default async function globalSetup() {
       {
         runId,
         packageVersion: pkg.version,
+        siteIds: sites.map((s) => s.id),
         startedAt,
         finishedAt: null as string | null,
         browsersRequested: browsers,
