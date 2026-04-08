@@ -15,7 +15,8 @@
     "global-setup.ts",
     "utils/**/*.ts",
     "tests-htmlpage/**/*.ts",
-    "tests-hola/**/*.ts"
+    "tests-hola/**/*.ts",
+    "tests-synthly/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

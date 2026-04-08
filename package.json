@@ -8,6 +8,7 @@
     "test:htmlpage": "cross-env LAPUS_SITES=htmlpage playwright test",
     "test:htmlpage:manual": "cross-env LAPUS_SITES=htmlpage LAPUS_BROWSERS=chromium LAPUS_HEADED=1 LAPUS_WORKERS=1 LAPUS_TERMINAL_REPORTER=list playwright test",
     "test:hola": "cross-env LAPUS_SITES=hola playwright test",
+    "test:synthly": "cross-env LAPUS_SITES=synthly playwright test",
     "test:chromium": "cross-env LAPUS_BROWSERS=chromium playwright test",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
